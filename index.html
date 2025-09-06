@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SHOWROV |  Experience Designer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: #030014;
+      color: #fff;
+      line-height: 1.8;
+      cursor: auto; 
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    #particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+    .hero {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+      perspective: 1000px;
+    }
+
+    .parallax-layer {
+      text-align: center;
+      transform-style: preserve-3d;
+    }
+
+    .hero h1 {
+      font-size: 8rem;
+      font-weight: 700;
+      letter-spacing: -4px;
+      background: linear-gradient(45deg, #f093fb, #f5576c, #4facfe, #00f2fe);
+      background-size: 300% 300%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradientShift 6s ease infinite;
+      margin: 0;
+      filter: drop-shadow(0 0 20px rgba(245, 87, 108, 0.5));
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .tagline {
+      font-size: 1.8rem;
+      font-weight: 300;
+      margin-top: 1rem;
+      letter-spacing: 2px;
+      opacity: 0.9;
+    }
+
+    .scroll-indicator {
+      margin-top: 3rem;
+    }
+
+    .scroll-indicator span {
+      display: block;
+      font-size: 0.9rem;
+      letter-spacing: 3px;
+      margin-bottom: 1rem;
+      opacity: 0.7;
+    }
+
+    .mouse-scroll {
+      display: inline-block;
+    }
+
+    .mouse {
+      width: 26px;
+      height: 46px;
+      border: 2px solid rgba(255,255,255,0.5);
+      border-radius: 13px;
+      position: relative;
+    }
+
+    .wheel {
+      width: 4px;
+      height: 8px;
+      background: rgba(255,255,255,0.7);
+      border-radius: 2px;
+      position: absolute;
+      top: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      animation: wheelScroll 1s infinite ease-in-out;
+    }
+
+    @keyframes wheelScroll {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(12px); }
+    }
+  
+    .fade-up {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+
+    .fade-up.appear {
+      opacity: 1;
+      transform: translateY(0);
+      transition: all 1.2s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    [data-delay] { transition-delay: calc(var(--delay, 0) * 1ms); }
+    [data-delay="200"] { --delay: 200; }
+    [data-delay="400"] { --delay: 400; }
+
+    .title-reveal, .text-reveal {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+    .title-reveal.appear {
+      opacity: 1;
+      transform: translateY(0);
+      transition: all 1s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    .text-reveal.appear {
+      opacity: 1;
+      transform: translateY(0);
+      transition: all 1s cubic-bezier(0.23, 1, 0.32, 1) 0.2s;
+    }
+
+    .projects {
+      padding: 120px 0;
+    }
+
+    .projects h2 {
+      text-align: center;
+      font-size: 4rem;
+      margin-bottom: 4rem;
+      background: linear-gradient(45deg, #ff9a9e, #fecfef, #a18cd1, #fbc2eb);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-size: 200% 200%;
+      animation: gradientShift 4s ease infinite;
+    }
+
+    .project-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 50px;
+      perspective: 1500px;
+    }
+
+    .project-card {
+      height: 500px;
+      position: relative;
+      border-radius: 24px;
+      overflow: hidden;
+      transform-style: preserve-3d;
+      transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      background: rgba(15, 12, 35, 0.4);
+      backdrop-filter: blur(5px);
+    }
+
+    .card-glow {
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    .project-card:hover .card-glow {
+      opacity: 1;
+    }
+
+    .card-content {
+      position: relative;
+      z-index: 2;
+      padding: 30px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: rgba(10, 8, 25, 0.3);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 24px;
+      transition: background 0.4s ease;
+    }
+
+    .project-card:hover .card-content {
+      background: rgba(20, 15, 40, 0.5);
+    }
+
+    .project-card h3 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #fff;
+    }
+
+    .project-card h3 span {
+      font-size: 0.9rem;
+      opacity: 0.8;
+      background: rgba(255,255,255,0.1);
+      padding: 4px 12px;
+      border-radius: 50px;
+      font-weight: 500;
+    }
+
+    .project-meta {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1.2rem;
+      font-size: 0.85rem;
+      opacity: 0.7;
+    }
+
+    .project-card p {
+      color: rgba(255,255,255,0.85);
+      font-weight: 300;
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .tech-stack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .tech {
+      background: rgba(255,255,255,0.1);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .project-buttons {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn-project {
+      padding: 10px 20px;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      text-align: center;
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-demo {
+      background: linear-gradient(45deg, #6eff8b, #3ac963);
+      color: #000;
+    }
+
+    .btn-code {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .btn-project:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 7px 20px rgba(0,0,0,0.3);
+    }
+
+    .btn-demo:hover {
+      background: linear-gradient(45deg, #5de77d, #2eb853);
+    }
+
+    .btn-code:hover {
+      background: rgba(255,255,255,0.15);
+      border-color: rgba(255,255,255,0.4);
+    }
+
+    .btn-project::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+      z-index: -1;
+    }
+
+    .btn-project:hover::before {
+      width: 200px;
+      height: 200px;
+    }
+
+    footer {
+      padding: 80px 0 40px;
+      text-align: center;
+      font-weight: 300;
+      color: rgba(255,255,255,0.5);
+      font-size: 0.95rem;
+      letter-spacing: 1px;
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 4rem; }
+      .tagline { font-size: 1.3rem; }
+      .projects h2 { font-size: 2.5rem; }
+      .project-grid { grid-template-columns: 1fr; }
+      .card-content { padding: 25px 20px; }
+      .project-card { height: auto; min-height: 480px; }
+      .project-buttons { flex-direction: column; }
+      .btn-project { flex: none; }
+    }
+
+  
+    html, body {
+      overflow-x: hidden;
+    }
+  </style>
+</head>
+<body>
+
+
+  <canvas id="particles"></canvas>
+
+  <header class="hero">
+    <div class="parallax-layer" data-speed="0.3">
+      <h1 class="fade-up" data-delay="0">SHOWROV</h1>
+      <p class="tagline fade-up" data-delay="200">Crafting immersive digital experiences with code & soul.</p>
+      <div class="scroll-indicator fade-up" data-delay="400">
+        <span>Scroll to explore</span>
+        <div class="mouse-scroll">
+          <div class="mouse">
+            <div class="wheel"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  
+  <section class="about scroll-section">
+    <div class="container">
+      <h2 class="title-reveal">∞ About Me</h2>
+      <p class="text-reveal">
+        I’m a frontend developer obsessed with pixel-perfect interactions, smooth animations, and emotional user journeys.
+        I turn complex ideas into intuitive interfaces  and I build everything with performance, accessibility, and delight in mind.
+        These are my most polished creations to date.
+      </p>
+    </div>
+  </section>
+
+ 
+  <section class="projects scroll-section">
+    <div class="container">
+      <h2 class="title-reveal">🚀 Featured Projects</h2>
+      <div class="project-grid">
+
+ 
+        <div class="project-card" data-tilt>
+          <div class="card-glow"></div>
+          <div class="card-content">
+            <div>
+              <h3><span>01</span>Habit Tracker RPG</h3>
+              <div class="project-meta">
+                <span></span>
+                <span></span>
+              </div>
+              <p>
+                A gamified habit tracker where completing daily tasks earns XP, levels, and streaks. Users unlock achievements, compete on leaderboards, and make productivity feel like an adventure.
+              </p>
+              <div class="tech-stack">
+                <span class="tech">HTML5</span>
+                <span class="tech">CSS3</span>
+                <span class="tech">JavaScript</span>
+                
+              </div>
+            </div>
+            <div class="project-buttons">
+              <a href="#" class="btn-project btn-demo">Live Demo</a>
+              <a href="#" class="btn-project btn-code">GitHub</a>
+            </div>
+          </div>
+        </div>
+
+     
+        <div class="project-card" data-tilt>
+          <div class="card-glow"></div>
+          <div class="card-content">
+            <div>
+              <h3><span>02</span> ..</h3>
+              <div class="project-meta">
+                <span></span>
+                <span>....</span>
+              </div>
+              <p>
+                ....
+              </p>
+              <div class="tech-stack">
+                <span class="tech">HTML5</span>
+                <span class="tech">SCSS</span>
+                <span class="tech">JavaScript</span>
+                <span class="tech">Swiper.js</span>
+                <span class="tech">A11y</span>
+              </div>
+            </div>
+            <div class="project-buttons">
+              <a href="#" class="btn-project btn-demo">Live Demo</a>
+              <a href="#" class="btn-project btn-code">GitHub</a>
+            </div>
+          </div>
+        </div>
+
+        
+        <div class="project-card" data-tilt>
+          <div class="card-glow"></div>
+          <div class="card-content">
+            <div>
+              <h3><span>03</span> Cosmic Thoughts</h3>
+              <div class="project-meta">
+                <span>Personal Blog & Journal</span>
+                <span>2025</span>
+              </div>
+              <p>
+                A minimal, distraction-free blog with dark mode, reading progress indicator, and constellation-themed post navigation. Every scroll feels like floating through space.
+              </p>
+              <div class="tech-stack">
+                <span class="tech">HTML5</span>
+                <span class="tech">CSS Grid</span>
+                <span class="tech">Vanilla JS</span>
+                <span class="tech">LocalStorage</span>
+                <span class="tech">Dark Mode</span>
+              </div>
+            </div>
+            <div class="project-buttons">
+              <a href="#" class="btn-project btn-demo">Live Demo</a>
+              <a href="#" class="btn-project btn-code">GitHub</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+<footer class="scroll-section">
+    <div class="container">
+      <p class="text-reveal">© 2025 Alex Rivera • Built with passion, CSS, and late-night coffee</p>
+    </div>
+</footer>
+  <script>
+    
+    class Particle {
+      constructor(x, y, ctx) {
+        this.x = x;
+        this.y = y;
+        this.ctx = ctx;
+        this.size = Math.random() * 3 + 1;
+        this.speedX = Math.random() * 1 - 0.5;
+        this.speedY = Math.random() * 1 - 0.5;
+        this.color = `hsl(${Math.random() * 60 + 280}, 100%, 70%)`;
+        this.life = 1;
+        this.decay = Math.random() * 0.01 + 0.005;
+      }
+
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        this.life -= this.decay;
+      }
+
+      draw() {
+        if (this.life <= 0) return;
+        this.ctx.save();
+        this.ctx.globalAlpha = this.life;
+        this.ctx.fillStyle = this.color;
+        this.ctx.beginPath();
+        this.ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        this.ctx.fill();
+        this.ctx.restore();
+      }
+    }
+
+    class ParticleSystem {
+      constructor() {
+        this.canvas = document.getElementById('particles');
+        if (!this.canvas) return;
+
+        this.isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        if (this.isTouchDevice) {
+          this.canvas.style.display = 'none';
+          return;
+        }
+
+        this.ctx = this.canvas.getContext('2d');
+        this.particles = [];
+        this.mouse = { x: undefined, y: undefined };
+        this.maxParticles = 150;
+        this.emitRate = 3;
+
+        this.resize();
+        this.init();
+        this.animate();
+
+        window.addEventListener('resize', () => this.resize());
+        window.addEventListener('mousemove', (e) => {
+          this.mouse.x = e.x;
+          this.mouse.y = e.y;
+          this.emitParticles();
+        });
+      }
+
+      resize() {
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+      }
+
+      init() {
+        for (let i = 0; i < 50; i++) {
+          this.addParticle(
+            Math.random() * this.canvas.width,
+            Math.random() * this.canvas.height
+          );
+        }
+      }
+
+      addParticle(x, y) {
+        if (this.particles.length >= this.maxParticles) return;
+        this.particles.push(new Particle(x, y, this.ctx));
+      }
+
+      emitParticles() {
+        for (let i = 0; i < this.emitRate; i++) {
+          this.addParticle(this.mouse.x, this.mouse.y);
+        }
+      }
+
+      animate() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.particles = this.particles.filter(p => p.life > 0);
+        this.particles.forEach(p => {
+          p.update();
+          p.draw();
+        });
+        requestAnimationFrame(() => this.animate());
+      }
+    }
+
+    class VanillaTilt {
+      constructor(element) {
+        this.element = element;
+        this.settings = {
+          glare: true,
+          "max-glare": 0.2,
+          scale: 1.03,
+          max: 6,
+          speed: 300
+        };
+        this.init();
+      }
+
+      init() {
+        this.element.addEventListener("mousemove", (e) => this.onMouseMove(e));
+        this.element.addEventListener("mouseleave", () => this.onMouseLeave());
+        if (this.settings.glare) {
+          this.initGlare();
+        }
+      }
+
+      initGlare() {
+        const glare = document.createElement("div");
+        glare.classList.add("glare");
+        Object.assign(glare.style, {
+          position: "absolute",
+          top: "0",
+          left: "0",
+          width: "100%",
+          height: "100%",
+          background: "rgba(255,255,255,0)",
+          borderRadius: "24px",
+          pointerEvents: "none",
+          transform: "rotateX(0deg) rotateY(0deg)"
+        });
+        this.element.appendChild(glare);
+        this.glare = glare;
+      }
+
+      onMouseMove(e) {
+        const rect = this.element.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+        const y = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+
+        const rotateX = y * this.settings.max;
+        const rotateY = -x * this.settings.max;
+
+        this.element.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(${this.settings.scale}, ${this.settings.scale}, ${this.settings.scale})`;
+
+        if (this.glare) {
+          const glarePower = x * this.settings["max-glare"];
+          this.glare.style.background = `rgba(255,255,255,${Math.abs(glarePower * 0.8)})`;
+        }
+      }
+
+      onMouseLeave() {
+        this.element.style.transition = "all 0.5s ease";
+        this.element.style.transform = "perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1,1,1)";
+        if (this.glare) {
+          this.glare.style.background = "rgba(255,255,255,0)";
+        }
+        setTimeout(() => {
+          this.element.style.transition = "";
+        }, 500);
+      }
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+
+     
+      new ParticleSystem();
+
+      
+      document.querySelectorAll("[data-tilt]").forEach(el => new VanillaTilt(el));
+
+     
+      const revealOnScroll = () => {
+        const elements = document.querySelectorAll('.fade-up, .title-reveal, .text-reveal, .scroll-section');
+        elements.forEach(el => {
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= window.innerHeight * 0.85 && rect.bottom >= 0) {
+            el.classList.add('appear');
+          }
+        });
+      };
+
+      
+      if ("IntersectionObserver" in window) {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('appear');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
+
+        document.querySelectorAll('.fade-up, .title-reveal, .text-reveal, .scroll-section').forEach(el => {
+          observer.observe(el);
+        });
+      } else {
+        window.addEventListener('scroll', revealOnScroll);
+      }
+
+      
+      setTimeout(revealOnScroll, 100);
+
+      // Parallax Hero Effect
+      const parallaxLayer = document.querySelector('.parallax-layer');
+      if (parallaxLayer && window.innerWidth > 768) {
+        document.addEventListener('mousemove', (e) => {
+          const x = (window.innerWidth - e.pageX * 2) / 60;
+          const y = (window.innerHeight - e.pageY * 2) / 60;
+          parallaxLayer.style.transform = `translateX(${x}px) translateY(${y}px)`;
+        });
+      }
+
+    });
+  </script>
+
+</body>
+</html>
